@@ -675,7 +675,7 @@
   <action name="actionRestart">
    <property name="icon">
     <iconset resource="Resources.qrc">
-     <normaloff>:/icons/restart.svg</normaloff>:/icons/restart.svg</iconset>
+     <normaloff>:/icons/resource/restart.svg</normaloff>:/icons/resource/restart.svg</iconset>
    </property>
    <property name="text">
     <string>Restart game</string>
@@ -684,7 +684,7 @@
   <action name="actionQuit">
    <property name="icon">
     <iconset resource="Resources.qrc">
-     <normaloff>:/icons/power.svg</normaloff>:/icons/power.svg</iconset>
+     <normaloff>:/icons/resource/power.svg</normaloff>:/icons/resource/power.svg</iconset>
    </property>
    <property name="text">
     <string>Quit game</string>

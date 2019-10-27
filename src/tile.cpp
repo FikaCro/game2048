@@ -1,4 +1,4 @@
-#include "tile.h"
+#include "header/tile.h"
 
 #include <QPainter>
 #include <QGraphicsScene>

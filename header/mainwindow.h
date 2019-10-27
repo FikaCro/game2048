@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "board.h"
+#include "header/board.h"
 
 #include <QMainWindow>
 

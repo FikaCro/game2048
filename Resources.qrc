@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>power.svg</file>
-        <file>restart.svg</file>
+        <file>resource/power.svg</file>
+        <file>resource/restart.svg</file>
     </qresource>
 </RCC>
