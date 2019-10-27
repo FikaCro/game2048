@@ -17,20 +17,21 @@ public:
     Board(uint dimension, QObject *parent = nullptr);
     ~Board() Q_DECL_OVERRIDE;
     void initBoardGame();
+    void reset();
 
 protected:
-    void drawBackground(QPainter *painter, const QRectF &rect) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent* keyEvent) Q_DECL_OVERRIDE;
 
 private:
-    void reset();
     void changeRandomTile();
     bool isFull();
     void move(Direction direction);
+    void updateScore(long score);
 
     uint dimension;
     std::vector<std::vector<Tile*>> board;
     long score;
+    QGraphicsTextItem* score_item;
 };
 
 #endif // BOARD_H

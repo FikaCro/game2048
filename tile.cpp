@@ -10,6 +10,9 @@
 Tile::Tile() : QGraphicsItem()
 {
     value = 0;
+
+    width = 0;
+    height = 0;
 }
 
 void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -17,9 +20,11 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    double width = scene()->width()/4;
-    double height = scene()->height()/4;
-    double radius = 10;
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
+
+    width = scene()->width()*0.225;
+    height = scene()->height()*0.225;
+    double radius = 5;
 
     QPen pen;
     pen.setStyle(Qt::SolidLine);
@@ -88,7 +93,10 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         font.setPointSize(32);
         font.setBold(true);
         painter->setFont(font);
-        painter->setPen(Qt::white);
+
+        pen.setColor("#776E65");
+        painter->setPen(pen);
+
         painter->scale(1, -1);
         painter->drawText(boundingRect(), Qt::AlignCenter, QString::number(value));
     }
@@ -96,7 +104,7 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 QRectF Tile::boundingRect() const
 {
-    return QRectF(-100, -100, 200, 200);
+    return QRectF(-width/2, -height/2, width, height);
 }
 
 int Tile::getValue()
@@ -111,7 +119,7 @@ void Tile::setValue(int value)
 
 void Tile::setValueRandom()
 {
-    value = rand() % 100 + 1 >= 80 ? 4 : 2;
+    value = rand() % 100 + 1 >= 90 ? 4 : 2;
 }
 
 void Tile::mergeTiles()

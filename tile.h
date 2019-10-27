@@ -24,6 +24,8 @@ public:
 private:
     int value;
     bool merged_this_turn;
+    double width;
+    double height;
 };
 
 #endif // TILE_H

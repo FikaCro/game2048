@@ -1,14 +1,15 @@
 #include "board.h"
 
-#include <time.h>
 #include <QPainter>
 #include <QKeyEvent>
-#include <QDebug>
+#include <QTextItem>
 
 Board::Board(uint dimension, QObject *parent) : QGraphicsScene(parent)
 {
     this->dimension = dimension;
     board.resize(dimension);
+
+    score = 0;
 }
 
 Board::~Board()
@@ -26,44 +27,17 @@ void Board::initBoardGame()
         }
     }
     changeRandomTile();
-}
 
-void Board::drawBackground(QPainter *painter, const QRectF &rect)
-{
-    Q_UNUSED(rect)
-
-    QPen pen;
-    pen.setColor(Qt::lightGray);
-    painter->setPen(pen);
-
-    for (double i = 0; i < width(); i += width()/4) {
-        painter->drawLine(QPointF(i, 0), QPointF(i, height()));
-    }
-    for (double i = 0; i < height(); i += height()/4) {
-        painter->drawLine(QPointF(0, i), QPointF(width(), i));
-    }
-}
-
-void Board::keyPressEvent(QKeyEvent *keyEvent)
-{
-    switch (keyEvent->key()) {
-    case Qt::Key_Up:
-        move(Direction::Up);
-        qDebug() << "up";
-        break;
-    case Qt::Key_Down:
-        move(Direction::Down);
-        qDebug() << "down";
-        break;
-    case Qt::Key_Right:
-        move(Direction::Right);
-        qDebug() << "right";
-        break;
-    case Qt::Key_Left:
-        move(Direction::Left);
-        qDebug() << "left";
-        break;
-    }
+    score_item = new QGraphicsTextItem();
+    QFont font;
+    font.setPointSize(20);
+    font.setBold(true);
+    score_item->setFont(font);
+    score_item->setDefaultTextColor(QColor("#776E65"));
+    addItem(score_item);
+    score_item->setPos(50, 630);
+    score_item->setTransform(QTransform::fromScale(1, -1));
+    updateScore(score);
 }
 
 void Board::reset()
@@ -74,15 +48,33 @@ void Board::reset()
         }
     }
     changeRandomTile();
+    update();
+}
+
+void Board::keyPressEvent(QKeyEvent *keyEvent)
+{
+    switch (keyEvent->key()) {
+    case Qt::Key_Up:
+        move(Direction::Up);
+        break;
+    case Qt::Key_Down:
+        move(Direction::Down);
+        break;
+    case Qt::Key_Right:
+        move(Direction::Right);
+        break;
+    case Qt::Key_Left:
+        move(Direction::Left);
+        break;
+    }
 }
 
 void Board::changeRandomTile()
 {
-    int x, y;
-    srand(time(NULL));
+    uint x, y;
     while (true) {
-        x = rand() % 4;
-        y = rand() % 4;
+        x = rand() % dimension;
+        y = rand() % dimension;
         if (board.at(x).at(y)->getValue() == 0) {
             break;
         }
@@ -90,7 +82,6 @@ void Board::changeRandomTile()
     board.at(x).at(y)->setValueRandom();
 
     if (isFull()) {
-        qDebug() << "IZGUBIO SI";
         reset();
     }
 }
@@ -116,7 +107,7 @@ void Board::move(Board::Direction direction)
     case Up:
         for(int i = 0; i < dimension; i++) {
              for(int j = dimension - 1; j >= 0; j--) {
-                 if (board.at(i).at(j) != 0) {
+                 if (board.at(i).at(j)->getValue() != 0) {
                      for (int k = dimension-1; k > j; k--) {
                          if (board.at(i).at(k)->getValue() == 0) {
                              board.at(i).at(k)->setValue(board.at(i).at(j)->getValue());
@@ -128,6 +119,8 @@ void Board::move(Board::Direction direction)
                                   !board.at(i).at(k)->getMergedThisTurn()) {
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
+
+                             updateScore(board.at(i).at(k)->getValue());
 
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
@@ -154,6 +147,8 @@ void Board::move(Board::Direction direction)
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
+                             updateScore(board.at(i).at(k)->getValue());
+
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
                              move_success = true;
@@ -178,6 +173,8 @@ void Board::move(Board::Direction direction)
                                   !board.at(k).at(j)->getMergedThisTurn()) {
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
+
+                             updateScore(board.at(k).at(j)->getValue());
 
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
@@ -204,6 +201,8 @@ void Board::move(Board::Direction direction)
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
+                             updateScore(board.at(k).at(j)->getValue());
+
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
                              move_success = true;
@@ -215,12 +214,18 @@ void Board::move(Board::Direction direction)
         break;
     }
     if (move_success) {
-        changeRandomTile();
-
         for (auto&& tile : merged_tiles) {
             tile->setMergedThisTurn(false);
         }
 
+        changeRandomTile();
         update();
     }
+}
+
+void Board::updateScore(long score)
+{
+    this->score += score;
+    score_item->setPlainText(QString("Score: %1").arg(this->score));
+    update();
 }

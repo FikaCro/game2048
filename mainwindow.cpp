@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->graphicsView->scene()->setSceneRect(0, 0, 800, 600);
     ui->graphicsView->setDragMode(QGraphicsView::NoDrag);
     ui->graphicsView->scale(1, -1);
+    ui->graphicsView->setBackgroundBrush(QColor("#faf8ef"));
 
     board->initBoardGame();
 }
@@ -19,3 +20,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_actionRestart_triggered()
+{
+    board->reset();
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+    qApp->exit();
+}
