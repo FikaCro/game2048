@@ -9,7 +9,7 @@
 
 Tile::Tile() : QGraphicsItem()
 {
-    value = 0;
+    value = 2;
 }
 
 void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

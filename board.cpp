@@ -25,6 +25,7 @@ void Board::initBoardGame()
             board.at(i).push_back(tile);
         }
     }
+    //changeRandomTile();
 }
 
 void Board::drawBackground(QPainter *painter, const QRectF &rect)
@@ -85,8 +86,7 @@ void Board::changeRandomTile()
             break;
         }
     }
-    int value = rand() % 100 + 1 >= 75 ? 4 : 2;
-    board.at(x).at(y)->setValue(value);
+    board.at(x).at(y)->setValueRandom();
 
     if (isFull()) {
         qDebug() << "IZGUBIO SI";
@@ -108,16 +108,76 @@ bool Board::isFull()
 
 void Board::move(Board::Direction direction)
 {
+    bool move_success = false;
     switch (direction) {
     case Up:
+        for(int i = dimension-1; i >=0; i--) {
+             for(int j = 0; j < dimension; j++) {
+                 if (board.at(i).at(j) != 0) {
+                     for (int k = dimension-1; k > j; k--) {
+                         if (board.at(i).at(k)->getValue() == 0) {
+                             board.at(i).at(k)->setValue(board.at(i).at(j)->getValue());
+                             board.at(i).at(j)->setValue(0);
+                             move_success = true;
+                         }
+                         else if (board.at(i).at(k)->getValue() == board.at(i).at(j)->getValue() &&
+                                  (board.at(i).at(k-1)->getValue()==0 || board.at(i).at(k-1)->getValue() == board.at(i).at(k)->getValue())) {
+                             board.at(i).at(k)->mergeTiles();
+                             board.at(i).at(j)->setValue(0);
+                             move_success = true;
+                         }
+                     }
+                 }
+             }
+         }
         break;
     case Down:
+        for(int i = 0; i < dimension; i++) {
+             for(int j = 0; j < dimension; j++) {
+                 if (board.at(i).at(j) != 0) {
+                     for (int k = 0; k < j; k++) {
+                         if (board.at(i).at(k)->getValue() == 0) {
+                             board.at(i).at(k)->setValue(board.at(i).at(j)->getValue());
+                             board.at(i).at(j)->setValue(0);
+                             move_success = true;
+                         }
+                         else if (board.at(i).at(k)->getValue() == board.at(i).at(j)->getValue() &&
+                                  (board.at(i).at(k+1)->getValue()==0 || board.at(i).at(k+1)->getValue() == board.at(i).at(k)->getValue())) {
+                             board.at(i).at(k)->mergeTiles();
+                             board.at(i).at(j)->setValue(0);
+                             move_success = true;
+                         }
+                     }
+                 }
+             }
+         }
         break;
     case Right:
         break;
     case Left:
+        for(int i = 0; i < dimension; i++) {
+             for(int j = 0; j < dimension; j++) {
+                 if (board.at(i).at(j) != 0) {
+                     for (int k = 0; k < i; k++) {
+                         if (board.at(k).at(j)->getValue() == 0) {
+                             board.at(k).at(j)->setValue(board.at(i).at(j)->getValue());
+                             board.at(i).at(j)->setValue(0);
+                             move_success = true;
+                         }
+                         else if (board.at(k).at(j)->getValue() == board.at(i).at(j)->getValue() &&
+                                  (board.at(k+1).at(j)->getValue()==0 || board.at(k+1).at(j)->getValue() == board.at(k).at(j)->getValue())) {
+                             board.at(k).at(j)->mergeTiles();
+                             board.at(i).at(j)->setValue(0);
+                             move_success = true;
+                         }
+                     }
+                 }
+             }
+         }
         break;
     }
-    changeRandomTile();
-    update();
+    if (move_success) {
+        changeRandomTile();
+        update();
+    }
 }
