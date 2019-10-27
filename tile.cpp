@@ -9,7 +9,7 @@
 
 Tile::Tile() : QGraphicsItem()
 {
-    value = 2;
+    value = 0;
 }
 
 void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -111,10 +111,20 @@ void Tile::setValue(int value)
 
 void Tile::setValueRandom()
 {
-    value = rand() % 100 + 1 >= 75 ? 4 : 2;
+    value = rand() % 100 + 1 >= 80 ? 4 : 2;
 }
 
 void Tile::mergeTiles()
 {
     value *= 2;
+}
+
+bool Tile::getMergedThisTurn()
+{
+    return merged_this_turn;
+}
+
+void Tile::setMergedThisTurn(bool merged)
+{
+    merged_this_turn = merged;
 }

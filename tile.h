@@ -18,9 +18,12 @@ public:
     void setValue(int value);
     void setValueRandom();
     void mergeTiles();
+    bool getMergedThisTurn();
+    void setMergedThisTurn(bool merged);
 
 private:
     int value;
+    bool merged_this_turn;
 };
 
 #endif // TILE_H
