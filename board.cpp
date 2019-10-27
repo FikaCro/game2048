@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include <QTextItem>
+#include <QDebug>
 
 Board::Board(uint dimension, QObject *parent) : QGraphicsScene(parent)
 {
@@ -26,7 +27,6 @@ void Board::initBoardGame()
             board.at(i).push_back(tile);
         }
     }
-    changeRandomTile();
 
     score_item = new QGraphicsTextItem();
     QFont font;
@@ -37,7 +37,10 @@ void Board::initBoardGame()
     addItem(score_item);
     score_item->setPos(50, 630);
     score_item->setTransform(QTransform::fromScale(1, -1));
-    updateScore(score);
+    updateScore();
+
+    changeRandomTile();
+    update();
 }
 
 void Board::reset()
@@ -47,6 +50,7 @@ void Board::reset()
             board.at(i).at(j)->setValue(0);
         }
     }
+    score = 0;
     changeRandomTile();
     update();
 }
@@ -80,10 +84,6 @@ void Board::changeRandomTile()
         }
     }
     board.at(x).at(y)->setValueRandom();
-
-    if (isFull()) {
-        reset();
-    }
 }
 
 bool Board::isFull()
@@ -96,6 +96,25 @@ bool Board::isFull()
         }
     }
     return true;
+}
+
+bool Board::canMove()
+{
+    for (uint i = 0; i < dimension - 1; i++) {
+        for (uint j = 0; j < dimension; j++) {
+            if (board.at(i).at(j)->getValue() == board.at(i+1).at(j)->getValue()) {
+                return true;
+            }
+        }
+    }
+    for (uint i = 0; i < dimension; i++) {
+        for (uint j = 0; j < dimension - 1; j++) {
+            if (board.at(i).at(j)->getValue() == board.at(i).at(j+1)->getValue()) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void Board::move(Board::Direction direction)
@@ -120,7 +139,7 @@ void Board::move(Board::Direction direction)
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             updateScore(board.at(i).at(k)->getValue());
+                             score += board.at(i).at(k)->getValue();
 
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
@@ -147,7 +166,7 @@ void Board::move(Board::Direction direction)
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             updateScore(board.at(i).at(k)->getValue());
+                             score += board.at(i).at(k)->getValue();
 
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
@@ -174,7 +193,7 @@ void Board::move(Board::Direction direction)
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             updateScore(board.at(k).at(j)->getValue());
+                             score += board.at(k).at(j)->getValue();
 
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
@@ -201,7 +220,7 @@ void Board::move(Board::Direction direction)
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             updateScore(board.at(k).at(j)->getValue());
+                             score += board.at(k).at(j)->getValue();
 
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
@@ -219,13 +238,16 @@ void Board::move(Board::Direction direction)
         }
 
         changeRandomTile();
+        updateScore();
         update();
+
+        if (isFull() && !canMove()) {
+            emit gameOver(score);
+        }
     }
 }
 
-void Board::updateScore(long score)
+void Board::updateScore()
 {
-    this->score += score;
-    score_item->setPlainText(QString("Score: %1").arg(this->score));
-    update();
+    score_item->setPlainText(QString("Score: %1").arg(score));
 }

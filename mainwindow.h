@@ -21,8 +21,8 @@ public:
 
 private slots:
     void on_actionRestart_triggered();
-
     void on_actionQuit_triggered();
+    void gameOver(long score);
 
 private:
     Ui::MainWindow *ui;

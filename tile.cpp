@@ -1,10 +1,6 @@
 #include "tile.h"
 
-#include <stdlib.h>
-#include <QPen>
-#include <QBrush>
 #include <QPainter>
-#include <QString>
 #include <QGraphicsScene>
 
 Tile::Tile() : QGraphicsItem()

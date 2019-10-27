@@ -1,13 +1,10 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <QObject>
 #include <QGraphicsItem>
 
-class Tile : public QObject, public QGraphicsItem
+class Tile : public QGraphicsItem
 {
-    Q_OBJECT
-
 public:
     Tile();
 

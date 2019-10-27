@@ -25,13 +25,17 @@ protected:
 private:
     void changeRandomTile();
     bool isFull();
+    bool canMove();
     void move(Direction direction);
-    void updateScore(long score);
+    void updateScore();
 
     uint dimension;
     std::vector<std::vector<Tile*>> board;
     long score;
     QGraphicsTextItem* score_item;
+
+signals:
+    void gameOver(long score);
 };
 
 #endif // BOARD_H
