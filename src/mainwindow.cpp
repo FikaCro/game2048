@@ -52,3 +52,8 @@ void MainWindow::gameOver(long score)
         qApp->exit();
     }
 }
+
+void MainWindow::on_actionAIPlay_triggered()
+{
+    scene->aiPlay();
+}

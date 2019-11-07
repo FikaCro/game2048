@@ -24,6 +24,8 @@ private slots:
     void on_actionQuit_triggered();
     void gameOver(long score);
 
+    void on_actionAIPlay_triggered();
+
 private:
     Ui::MainWindow *ui;
     Scene* scene;

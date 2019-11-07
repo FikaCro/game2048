@@ -667,6 +667,7 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <addaction name="actionAIPlay"/>
     <addaction name="actionRestart"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -688,6 +689,15 @@
    </property>
    <property name="text">
     <string>Quit game</string>
+   </property>
+  </action>
+  <action name="actionAIPlay">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/icons/resource/ai.png</normaloff>:/icons/resource/ai.png</iconset>
+   </property>
+   <property name="text">
+    <string>Let AI play game</string>
    </property>
   </action>
  </widget>

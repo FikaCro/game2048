@@ -2,5 +2,6 @@
     <qresource prefix="/icons">
         <file>resource/power.svg</file>
         <file>resource/restart.svg</file>
+        <file>resource/ai.png</file>
     </qresource>
 </RCC>
