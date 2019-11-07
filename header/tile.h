@@ -7,11 +7,12 @@ class Tile : public QGraphicsItem
 {
 public:
     Tile();
+    Tile(const Tile &tile);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) Q_DECL_OVERRIDE;
     QRectF boundingRect() const Q_DECL_OVERRIDE;
 
-    int getValue();
+    int getValue() const;
     void setValue(int value);
     void setValueRandom();
     void mergeTiles();

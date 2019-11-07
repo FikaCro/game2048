@@ -1,22 +1,21 @@
 #include "header/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "header/board.h"
+#include "header/scene.h"
 
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), board(new Board(4, this))
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), scene(new Scene(4, this))
 {
     ui->setupUi(this);
 
-    ui->graphicsView->setScene(board);
+    ui->graphicsView->setScene(scene);
     ui->graphicsView->scene()->setSceneRect(0, 0, 800, 600);
     ui->graphicsView->setDragMode(QGraphicsView::NoDrag);
     ui->graphicsView->scale(1, -1);
     ui->graphicsView->setBackgroundBrush(QColor("#faf8ef"));
 
-    board->initBoardGame();
-
-    connect(board, &Board::gameOver, this, &MainWindow::gameOver);
+    scene->initBoardGame();
+    connect(scene, &Scene::gameOver, this, &MainWindow::gameOver);
 }
 
 MainWindow::~MainWindow()
@@ -29,7 +28,7 @@ void MainWindow::on_actionRestart_triggered()
     QMessageBox::StandardButton message_box;
     message_box = QMessageBox::question(this, "Restart game", "Do you really want to restart game?", QMessageBox::No | QMessageBox::Yes);
     if (message_box == QMessageBox::Yes) {
-        board->reset();
+        scene->reset();
     }
 }
 
@@ -47,7 +46,7 @@ void MainWindow::gameOver(long score)
     QMessageBox::StandardButton message_box;
     message_box = QMessageBox::question(this, "Game over", QString("Your score is: %1. Play another game?").arg(score), QMessageBox::No | QMessageBox::Yes);
     if (message_box == QMessageBox::Yes) {
-        board->reset();
+        scene->reset();
     }
     else {
         qApp->exit();

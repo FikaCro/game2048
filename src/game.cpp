@@ -1,126 +1,20 @@
-#include "header/board.h"
+#include "header/game.h"
 
-#include <QPainter>
-#include <QKeyEvent>
-#include <QTextItem>
-#include <QDebug>
-
-Board::Board(uint dimension, QObject *parent) : QGraphicsScene(parent)
-{
-    this->dimension = dimension;
-    board.resize(dimension);
-
-    score = 0;
-}
-
-Board::~Board()
+Game::Game()
 {
 }
 
-void Board::initBoardGame()
+Game::~Game()
 {
-    for (uint i = 0; i < dimension; i++) {
-        for (uint j = 0; j < dimension; j++) {
-            Tile* tile = new Tile();
-            tile->setPos(QPointF(i*width()/dimension + width()/dimension/2, j*height()/dimension + height()/dimension/2));
-            addItem(tile);
-            board.at(i).push_back(tile);
-        }
-    }
-
-    score_item = new QGraphicsTextItem();
-    QFont font;
-    font.setPointSize(20);
-    font.setBold(true);
-    score_item->setFont(font);
-    score_item->setDefaultTextColor(QColor("#776E65"));
-    addItem(score_item);
-    score_item->setPos(50, 630);
-    score_item->setTransform(QTransform::fromScale(1, -1));
-    updateScore();
-
-    changeRandomTile();
-    update();
 }
 
-void Board::reset()
-{
-    for (uint i = 0; i < dimension; i++) {
-        for (uint j = 0; j < dimension; j++) {
-            board.at(i).at(j)->setValue(0);
-        }
-    }
-    score = 0;
-    changeRandomTile();
-    update();
-}
-
-void Board::keyPressEvent(QKeyEvent *keyEvent)
-{
-    switch (keyEvent->key()) {
-    case Qt::Key_Up:
-        move(Direction::Up);
-        break;
-    case Qt::Key_Down:
-        move(Direction::Down);
-        break;
-    case Qt::Key_Right:
-        move(Direction::Right);
-        break;
-    case Qt::Key_Left:
-        move(Direction::Left);
-        break;
-    }
-}
-
-void Board::changeRandomTile()
-{
-    uint x, y;
-    while (true) {
-        x = rand() % dimension;
-        y = rand() % dimension;
-        if (board.at(x).at(y)->getValue() == 0) {
-            break;
-        }
-    }
-    board.at(x).at(y)->setValueRandom();
-}
-
-bool Board::isFull()
-{
-    for (auto& vector : board) {
-        for (auto& tile : vector) {
-            if (tile->getValue() == 0) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-bool Board::canMove()
-{
-    for (uint i = 0; i < dimension - 1; i++) {
-        for (uint j = 0; j < dimension; j++) {
-            if (board.at(i).at(j)->getValue() == board.at(i+1).at(j)->getValue()) {
-                return true;
-            }
-        }
-    }
-    for (uint i = 0; i < dimension; i++) {
-        for (uint j = 0; j < dimension - 1; j++) {
-            if (board.at(i).at(j)->getValue() == board.at(i).at(j+1)->getValue()) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-void Board::move(Board::Direction direction)
+std::pair<bool, long> Game::move(Direction direction, std::vector<std::vector<Tile *> > &board)
 {
     bool move_success = false;
+    long score = 0;
+
     std::list<Tile*> merged_tiles;
+    int dimension = board.size();
 
     switch (direction) {
     case Up:
@@ -139,7 +33,7 @@ void Board::move(Board::Direction direction)
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score += board.at(i).at(k)->getValue();
+                             score = board.at(i).at(k)->getValue();
 
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
@@ -150,7 +44,7 @@ void Board::move(Board::Direction direction)
              }
          }
         break;
-    case Down:  
+    case Down:
         for(int i = 0; i < dimension; i++) {
              for(int j = 0; j < dimension; j++) {
                  if (board.at(i).at(j)->getValue() != 0) {
@@ -166,7 +60,7 @@ void Board::move(Board::Direction direction)
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score += board.at(i).at(k)->getValue();
+                             score = board.at(i).at(k)->getValue();
 
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
@@ -193,7 +87,7 @@ void Board::move(Board::Direction direction)
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score += board.at(k).at(j)->getValue();
+                             score = board.at(k).at(j)->getValue();
 
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
@@ -220,7 +114,7 @@ void Board::move(Board::Direction direction)
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score += board.at(k).at(j)->getValue();
+                             score = board.at(k).at(j)->getValue();
 
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
@@ -231,23 +125,69 @@ void Board::move(Board::Direction direction)
              }
          }
         break;
+    default:
+        break;
     }
     if (move_success) {
         for (auto&& tile : merged_tiles) {
             tile->setMergedThisTurn(false);
         }
+    }
+    return  std::make_pair(move_success, score);
+}
 
-        changeRandomTile();
-        updateScore();
-        update();
+void Game::changeRandomTile(std::vector<std::vector<Tile *> > &board)
+{
+    ulong dimension = board.size();
+    ulong x, y;
+    while (true) {
+        x = rand() % dimension;
+        y = rand() % dimension;
+        if (board.at(x).at(y)->getValue() == 0) {
+            break;
+        }
+    }
+    board.at(x).at(y)->setValueRandom();
+}
 
-        if (isFull() && !canMove()) {
-            emit gameOver(score);
+void Game::reset(std::vector<std::vector<Tile *> > &board)
+{
+    ulong dimension = board.size();
+    for (int i = 0; i < dimension; i++) {
+        for (int j = 0; j < dimension; j++) {
+            board.at(i).at(j)->setValue(0);
         }
     }
 }
 
-void Board::updateScore()
+bool Game::isFull(const std::vector<std::vector<Tile *> > &board)
 {
-    score_item->setPlainText(QString("Score: %1").arg(score));
+    for (auto& vector : board) {
+        for (auto& tile : vector) {
+            if (tile->getValue() == 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool Game::canMove(const std::vector<std::vector<Tile *> > &board)
+{
+    ulong dimension = board.size();
+    for (int i = 0; i < dimension - 1; i++) {
+        for (int j = 0; j < dimension; j++) {
+            if (board.at(i).at(j)->getValue() == board.at(i+1).at(j)->getValue()) {
+                return true;
+            }
+        }
+    }
+    for (int i = 0; i < dimension; i++) {
+        for (int j = 0; j < dimension - 1; j++) {
+            if (board.at(i).at(j)->getValue() == board.at(i).at(j+1)->getValue()) {
+                return true;
+            }
+        }
+    }
+    return false;
 }

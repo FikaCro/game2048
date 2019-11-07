@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "header/board.h"
+#include "header/scene.h"
 
 #include <QMainWindow>
 
@@ -26,6 +26,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    Board* board;
+    Scene* scene;
 };
 #endif // MAINWINDOW_H

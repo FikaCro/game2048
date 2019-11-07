@@ -9,6 +9,18 @@ Tile::Tile() : QGraphicsItem()
 
     width = 0;
     height = 0;
+
+    merged_this_turn = false;
+}
+
+Tile::Tile(const Tile& tile)
+{
+    value = tile.getValue();
+
+    width = 0;
+    height = 0;
+
+    merged_this_turn = false;
 }
 
 void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -103,7 +115,7 @@ QRectF Tile::boundingRect() const
     return QRectF(-width/2, -height/2, width, height);
 }
 
-int Tile::getValue()
+int Tile::getValue() const
 {
     return value;
 }
