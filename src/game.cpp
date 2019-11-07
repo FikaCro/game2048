@@ -33,7 +33,7 @@ std::pair<bool, long> Game::move(Direction direction, std::vector<std::vector<Ti
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score = board.at(i).at(k)->getValue();
+                             score += board.at(i).at(k)->getValue();
 
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
@@ -60,7 +60,7 @@ std::pair<bool, long> Game::move(Direction direction, std::vector<std::vector<Ti
                              board.at(i).at(k)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score = board.at(i).at(k)->getValue();
+                             score += board.at(i).at(k)->getValue();
 
                              board.at(i).at(k)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(i).at(k));
@@ -87,7 +87,7 @@ std::pair<bool, long> Game::move(Direction direction, std::vector<std::vector<Ti
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score = board.at(k).at(j)->getValue();
+                             score += board.at(k).at(j)->getValue();
 
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
@@ -114,7 +114,7 @@ std::pair<bool, long> Game::move(Direction direction, std::vector<std::vector<Ti
                              board.at(k).at(j)->mergeTiles();
                              board.at(i).at(j)->setValue(0);
 
-                             score = board.at(k).at(j)->getValue();
+                             score += board.at(k).at(j)->getValue();
 
                              board.at(k).at(j)->setMergedThisTurn(true);
                              merged_tiles.push_back(board.at(k).at(j));
