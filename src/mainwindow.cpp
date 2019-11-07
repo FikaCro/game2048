@@ -1,6 +1,5 @@
 #include "header/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "header/scene.h"
 
 #include <QMessageBox>
 

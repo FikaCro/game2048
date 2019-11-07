@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include "artificialintelligence.h"
+
 #include <QGraphicsScene>
 
 class Scene : public QGraphicsScene
