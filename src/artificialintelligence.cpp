@@ -1,6 +1,6 @@
 #include "header/artificialintelligence.h"
 
-#define DEPTH 3
+#define DEPTH 4
 
 ArtificialIntelligence::ArtificialIntelligence(Game *game)
 {
@@ -16,6 +16,7 @@ Direction ArtificialIntelligence::getBestMove(const std::vector<std::vector<Tile
         std::vector<std::vector<Tile*>> new_board = cloneBoard(board);
 
         if (!game->move(static_cast<Direction>(enum_it), new_board).first) {
+            deleteBoard(new_board);
             continue;
         }
 
@@ -43,6 +44,7 @@ long ArtificialIntelligence::minimax(const std::vector<std::vector<Tile *> > &bo
             auto next = game->move(static_cast<Direction>(enum_it), new_board);
 
             if (!next.first) {
+                deleteBoard(new_board);
                 continue;
             }
 
